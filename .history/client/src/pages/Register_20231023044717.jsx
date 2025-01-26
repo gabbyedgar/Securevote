@@ -24,7 +24,37 @@ export default function Register() {
     event.preventDefault();
     setIsProcessing(true);
 
-    
+    try {
+      // Send the request to the server
+      const response = await axiosRequest.post("/signup", formData);
+
+      // Save the token to the user localStorage
+      localStorage.setItem("jwt_token", response.data.token);
+
+      // Login the authenticated user
+      login(response.data.user);
+
+      setIsProcessing(false);
+
+      // Show user success message
+      setMessage(response.data.message);
+      setType("Success");
+      openSnackBar();
+
+      // Send the user to the dashboard
+      setTimeout(() => {
+        navigate("/account/dashboard");
+      }, 1000);
+    } catch (xhr) {
+      setIsProcessing(false);
+
+      // Show user error message
+      setMessage(xhr.response.data.message);
+      setType("failed");
+      openSnackBar();
+    }
+  };
+
   return (
     <>
       <section className="overflow-hidden p-5 mb-12">
